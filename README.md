@@ -8,6 +8,9 @@ Difference at the moment is that instead of just pasting the URL, you can just p
 
 
 ```
-python2 fontbomber.py Exo 2, Lustria
-python2 fontbomber.py http://fonts.googleapis.com/css?family=Seymour+One|News+Cycle|Hanalei|Chango|Exo+2
+python fontbomber Exo 2, Lustria
+python fontbomber http://fonts.googleapis.com/css?family=Seymour+One|News+Cycle|Hanalei|Chango|Exo+2
 ```
+
+Works in both Python 2.7 and 3.3.
+Will be on PyPi shortly.
