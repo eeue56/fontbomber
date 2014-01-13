@@ -13,6 +13,8 @@ URL = 'http://fonts.googleapis.com/css?family={}'
 DEBUG = False
 
 def to_url(families):
+    if not isinstance(families, list):
+        return families
     return URL.format('|'.join(family.replace(' ', '+') for family in families))
 
 def get_woff_urls(css_data):
@@ -49,7 +51,9 @@ def main():
         families = ['Seymour One', 'Chango', 'Exo 2']
     else:
         families = ' '.join(sys.argv[1:])
-        families = [f.strip() for f in families.split(',') if f.strip()]
+
+        if 'http' not in families:
+            families = [f.strip() for f in families.split(',') if f.strip()]
 
     if not families:
         print('Nothing to do!')
@@ -68,6 +72,6 @@ def main():
 
     with open('css/fonts.css', 'wb') as f:
         f.write(css)
-        
+
 if __name__ == '__main__':
     main()
