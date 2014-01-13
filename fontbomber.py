@@ -68,7 +68,7 @@ def main():
 
     create_folders(['font', 'css'])
 
-    css = get(to_url(families)).content
+    css = get(to_url(families)).text
     urls = get_woff_urls(css)
     downloader = partial(download_to_folder, 'font')
 
@@ -77,7 +77,7 @@ def main():
 
     css = fix_css('font', urls, css)
 
-    with open('css/fonts.css', 'wb') as f:
+    with open('css/fonts.css', 'w') as f:
         f.write(css)
 
 if __name__ == '__main__':
