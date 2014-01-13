@@ -26,6 +26,11 @@ def get_woff_urls(css_data):
     ''' returns all the urls found in the css file'''
     return re.findall('url\((.*?)\)', css_data)
 
+def warn_about_missing(css_data, families):
+    for family in families:
+        if family not in css_data:
+            print('Failed to download font "{}".'.format(family))
+
 def get_file_name(url):
     ''' gets a file name from a url '''
     return url[url.rfind('/') + 1:].strip()
@@ -64,6 +69,8 @@ def main():
 
         if 'http' not in families:
             families = [f.strip() for f in families.split(',') if f.strip()]
+        else:
+            families = [f.replace('+', ' ').strip() for f in families[families.find('=') + 1:].split('|')]
 
     if not families:
         print('Nothing to do!')
@@ -72,12 +79,15 @@ def main():
     create_folders(['font', 'css'])
 
     css = get(to_url(families)).text
+
+    warn_about_missing(css, families)
+
     urls = get_woff_urls(css)
     
     downloader = partial(download_to_folder, 'font')
 
     for url in urls:
-        downloader(urls)
+        downloader(url)
 
     css = fix_css('../font', urls, css)
 
