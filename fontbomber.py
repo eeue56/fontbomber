@@ -9,6 +9,8 @@ import sys
 
 from functools import partial
 
+from multiprocessing import Pool
+
 
 URL = 'http://fonts.googleapis.com/css?family={}'
 DEBUG = False
@@ -71,12 +73,13 @@ def main():
 
     css = get(to_url(families)).text
     urls = get_woff_urls(css)
+    
     downloader = partial(download_to_folder, 'font')
 
     for url in urls:
-        downloader(url)
+        downloader(urls)
 
-    css = fix_css('font', urls, css)
+    css = fix_css('../font', urls, css)
 
     with open('css/fonts.css', 'w') as f:
         f.write(css)
