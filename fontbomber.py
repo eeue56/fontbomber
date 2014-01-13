@@ -13,17 +13,22 @@ URL = 'http://fonts.googleapis.com/css?family={}'
 DEBUG = False
 
 def to_url(families):
+    ''' If families a list of strings, join them by | and replace spaces
+        with +, else just return families'''
     if not isinstance(families, list):
         return families
     return URL.format('|'.join(family.replace(' ', '+') for family in families))
 
 def get_woff_urls(css_data):
+    ''' returns all the urls found in the css file'''
     return re.findall('url\((.*?)\)', css_data)
 
 def get_file_name(url):
+    ''' gets a file name from a url '''
     return url[url.rfind('/') + 1:].strip()
 
 def download_to_folder(folder_name, item, func=lambda x:x):
+    ''' downloads an item to a folder, then runs func on it before saving'''
     r = get(item)
     file_name = get_file_name(r.url)
     folder_name += '/'
@@ -32,6 +37,7 @@ def download_to_folder(folder_name, item, func=lambda x:x):
         f.write(func(r.content))
 
 def fix_css(folder, urls, data):
+    ''' fixes the css to point to local copies'''
     folder += '/'
 
     for url in urls:
@@ -40,6 +46,7 @@ def fix_css(folder, urls, data):
     return data
 
 def create_folders(folders):
+    ''' creates folders, warns on failure'''
     for folder in folders:
         try:
             mkdir(folder)
