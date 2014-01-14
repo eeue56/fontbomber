@@ -52,7 +52,7 @@ def download_to_folder(folder_name, item, family_name, func=lambda x:x):
 
 def fix_css(folder, urls, names, data):
     ''' fixes the css to point to local copies'''
-    folder = '../' + folder
+    folder = '../{}/'.format(folder)
 
     for url, name in zip(urls, names):
         data = data.replace(url, folder + name)
