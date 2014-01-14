@@ -27,6 +27,7 @@ def get_woff_urls(css_data):
     return re.findall('url\((.*?)\)', css_data)
 
 def get_font_family_names(css_data):
+    """ Gets the font family names from the css data """
     return re.findall('font-family: \'(.*?)\'', css_data)
 
 def warn_about_missing(css_data, families):
@@ -60,6 +61,7 @@ def fix_css(folder, urls, names, data):
     return data
 
 def clean_name(name):
+    """ Cleans the name by removing spaces and adding .ttf to the end """
     EXTENSION = '.ttf'
     return name.replace(' ', '') + EXTENSION
 
