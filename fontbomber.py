@@ -26,6 +26,9 @@ def get_woff_urls(css_data):
     ''' returns all the urls found in the css file'''
     return re.findall('url\((.*?)\)', css_data)
 
+def get_font_family_names(css_data):
+    return re.findall('font-family: \'(.*?)\'', css_data)
+
 def warn_about_missing(css_data, families):
     for family in families:
         if family not in css_data:
@@ -35,23 +38,30 @@ def get_file_name(url):
     ''' gets a file name from a url '''
     return url[url.rfind('/') + 1:].strip()
 
-def download_to_folder(folder_name, item, func=lambda x:x):
+def download_to_folder(folder_name, item, family_name, func=lambda x:x):
     ''' downloads an item to a folder, then runs func on it before saving'''
+
+    print('Downloading "{}" from "{}".'.format(family_name, item))
+    
     r = get(item)
     file_name = get_file_name(r.url)
     folder_name += '/'
 
-    with open(folder_name + file_name, 'wb') as f:
+    with open(folder_name + family_name, 'wb') as f:
         f.write(func(r.content))
 
-def fix_css(folder, urls, data):
+def fix_css(folder, urls, names, data):
     ''' fixes the css to point to local copies'''
-    folder += '/'
+    folder = '../' + folder
 
-    for url in urls:
-        data = data.replace(url, folder + get_file_name(url))
+    for url, name in zip(urls, names):
+        data = data.replace(url, folder + name)
 
     return data
+
+def clean_name(name):
+    EXTENSION = '.ttf'
+    return name.replace(' ', '') + EXTENSION
 
 def create_folders(folders):
     ''' creates folders, warns on failure'''
@@ -83,13 +93,14 @@ def main():
     warn_about_missing(css, families)
 
     urls = get_woff_urls(css)
+    names = [clean_name(name) for name in get_font_family_names(css)]
     
     downloader = partial(download_to_folder, 'font')
 
-    for url in urls:
-        downloader(url)
+    for url, family in zip(urls, names):
+        downloader(url, family)
 
-    css = fix_css('../font', urls, css)
+    css = fix_css('font', urls, names, css)
 
     with open('css/fonts.css', 'w') as f:
         f.write(css)
