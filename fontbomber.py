@@ -32,7 +32,7 @@ def get_font_family_names(css_data):
 def warn_about_missing(css_data, families):
     for family in families:
         if family not in css_data:
-            print('Failed to download font "{}".'.format(family))
+            print('Failed to find font "{}".'.format(family))
 
 def get_file_name(url):
     ''' gets a file name from a url '''
@@ -86,24 +86,31 @@ def main():
         print('Nothing to do!')
         return
 
+    print('Creating folders... ')
     create_folders(['font', 'css'])
 
+    print('Downloading css file... ')
     css = get(to_url(families)).text
+    print('Downloaded!')
 
     warn_about_missing(css, families)
-
     urls = get_woff_urls(css)
     names = [clean_name(name) for name in get_font_family_names(css)]
     
     downloader = partial(download_to_folder, 'font')
 
+    print('Downloding fonts...')
     for url, family in zip(urls, names):
         downloader(url, family)
+    print('Downloaded!')
+
 
     css = fix_css('font', urls, names, css)
 
     with open('css/fonts.css', 'w') as f:
         f.write(css)
+
+    print('Finished!')
 
 if __name__ == '__main__':
     main()
